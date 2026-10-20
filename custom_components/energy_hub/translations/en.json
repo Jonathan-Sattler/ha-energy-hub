@@ -1,0 +1,261 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Energy Hub",
+        "description": "Energy Hub combines your existing energy sensors into cost, carbon and efficiency figures. You will map entities to slots in four short steps. Every slot except grid import and export energy is optional.",
+        "data": {
+          "name": "Name"
+        }
+      },
+      "electricity": {
+        "title": "Electricity",
+        "description": "Map grid, solar, battery and household entities. Provide either one signed grid power sensor or the import and export pair.",
+        "data": {
+          "grid_import_energy": "Grid import energy (kWh counter)",
+          "grid_export_energy": "Grid export energy (kWh counter)",
+          "grid_power": "Grid power (signed)",
+          "grid_power_sign": "Grid power sign convention",
+          "grid_import_power": "Grid import power",
+          "grid_export_power": "Grid export power",
+          "pv_power": "Solar power",
+          "pv_energy": "Solar energy (kWh counter)",
+          "battery_power": "Battery power (signed)",
+          "battery_power_sign": "Battery power sign convention",
+          "battery_soc": "Battery state of charge",
+          "battery_charge_energy": "Battery charge energy (kWh counter)",
+          "battery_discharge_energy": "Battery discharge energy (kWh counter)",
+          "battery_capacity_kwh": "Battery capacity",
+          "load_power": "Household power",
+          "load_energy": "Household energy (kWh counter)"
+        },
+        "data_description": {
+          "load_power": "Leave empty to compute it from solar, grid and battery.",
+          "load_energy": "Leave empty to compute it from the other counters."
+        }
+      },
+      "prices": {
+        "title": "Prices and cost",
+        "description": "Costs are computed from prices times energy. If your provider already computes costs, map those sensors as overrides.",
+        "data": {
+          "import_price": "Current import price (per kWh)",
+          "forecast_attribute": "Forecast attribute name on the price entity",
+          "export_price": "Current export price (per kWh)",
+          "export_price_fixed": "Fixed export price (per kWh)",
+          "import_cost_override": "Provider import cost sensor (override)",
+          "export_revenue_override": "Provider export revenue sensor (override)",
+          "flat_reference_price": "Flat tariff reference price (per kWh)",
+          "cheap_now": "Provider 'cheap electricity' flag",
+          "cheap_threshold_percentile": "Cheap threshold percentile"
+        },
+        "data_description": {
+          "forecast_attribute": "Attribute holding a list of intervals with start, end and price.",
+          "flat_reference_price": "What you would pay on a flat tariff; enables the savings sensors.",
+          "cheap_threshold_percentile": "Without a provider flag, electricity counts as cheap when the price is within this percentile of today's prices."
+        }
+      },
+      "gas_thermal": {
+        "title": "Gas and thermal",
+        "description": "Gas volumes are converted with the calorific value and correction factor from your gas bill. Solar thermal needs a harvested-energy counter.",
+        "data": {
+          "gas_heating_volume": "Gas for space heating (counter)",
+          "gas_dhw_volume": "Gas for hot water (counter)",
+          "gas_total_volume": "Gas total (counter, if no split)",
+          "gas_calorific_value": "Calorific value",
+          "gas_correction_factor": "Volume correction factor",
+          "gas_price": "Gas price (per kWh)",
+          "gas_price_entity": "Gas price entity (per kWh)",
+          "boiler_efficiency": "Boiler efficiency",
+          "solar_thermal_energy": "Solar thermal energy (kWh counter)",
+          "solar_collector_temp": "Solar collector temperature",
+          "solar_storage_temp": "Solar storage temperature",
+          "dhw_storage_temp": "Hot water storage temperature",
+          "solar_pump": "Solar pump",
+          "boiler_electricity_energy": "Boiler electricity (kWh counter)",
+          "burner_modulation": "Burner modulation",
+          "burner_active": "Burner active",
+          "outside_temp": "Outside temperature",
+          "hdd_base_temp": "Heating degree day base temperature"
+        },
+        "data_description": {
+          "gas_heating_volume": "Counters in m³ or kWh are both accepted.",
+          "boiler_efficiency": "Used to express solar thermal heat as avoided gas."
+        }
+      },
+      "carbon": {
+        "title": "Carbon",
+        "description": "Carbon figures need a live grid intensity sensor, for example from Electricity Maps.",
+        "data": {
+          "grid_co2_intensity": "Grid CO2 intensity (gCO2eq/kWh)",
+          "grid_fossil_share": "Grid fossil fuel share",
+          "gas_co2_factor": "Gas emission factor"
+        }
+      }
+    },
+    "error": {
+      "grid_power_pair": "Grid import power and grid export power must be mapped together.",
+      "grid_power_both": "Map either the signed grid power or the import/export pair, not both."
+    },
+    "abort": {
+      "already_configured": "This hub is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "electricity": {
+        "title": "Electricity",
+        "description": "Map grid, solar, battery and household entities. Provide either one signed grid power sensor or the import and export pair.",
+        "data": {
+          "grid_import_energy": "Grid import energy (kWh counter)",
+          "grid_export_energy": "Grid export energy (kWh counter)",
+          "grid_power": "Grid power (signed)",
+          "grid_power_sign": "Grid power sign convention",
+          "grid_import_power": "Grid import power",
+          "grid_export_power": "Grid export power",
+          "pv_power": "Solar power",
+          "pv_energy": "Solar energy (kWh counter)",
+          "battery_power": "Battery power (signed)",
+          "battery_power_sign": "Battery power sign convention",
+          "battery_soc": "Battery state of charge",
+          "battery_charge_energy": "Battery charge energy (kWh counter)",
+          "battery_discharge_energy": "Battery discharge energy (kWh counter)",
+          "battery_capacity_kwh": "Battery capacity",
+          "load_power": "Household power",
+          "load_energy": "Household energy (kWh counter)"
+        }
+      },
+      "prices": {
+        "title": "Prices and cost",
+        "data": {
+          "import_price": "Current import price (per kWh)",
+          "forecast_attribute": "Forecast attribute name on the price entity",
+          "export_price": "Current export price (per kWh)",
+          "export_price_fixed": "Fixed export price (per kWh)",
+          "import_cost_override": "Provider import cost sensor (override)",
+          "export_revenue_override": "Provider export revenue sensor (override)",
+          "flat_reference_price": "Flat tariff reference price (per kWh)",
+          "cheap_now": "Provider 'cheap electricity' flag",
+          "cheap_threshold_percentile": "Cheap threshold percentile"
+        }
+      },
+      "gas_thermal": {
+        "title": "Gas and thermal",
+        "data": {
+          "gas_heating_volume": "Gas for space heating (counter)",
+          "gas_dhw_volume": "Gas for hot water (counter)",
+          "gas_total_volume": "Gas total (counter, if no split)",
+          "gas_calorific_value": "Calorific value",
+          "gas_correction_factor": "Volume correction factor",
+          "gas_price": "Gas price (per kWh)",
+          "gas_price_entity": "Gas price entity (per kWh)",
+          "boiler_efficiency": "Boiler efficiency",
+          "solar_thermal_energy": "Solar thermal energy (kWh counter)",
+          "solar_collector_temp": "Solar collector temperature",
+          "solar_storage_temp": "Solar storage temperature",
+          "dhw_storage_temp": "Hot water storage temperature",
+          "solar_pump": "Solar pump",
+          "boiler_electricity_energy": "Boiler electricity (kWh counter)",
+          "burner_modulation": "Burner modulation",
+          "burner_active": "Burner active",
+          "outside_temp": "Outside temperature",
+          "hdd_base_temp": "Heating degree day base temperature"
+        }
+      },
+      "carbon": {
+        "title": "Carbon",
+        "data": {
+          "grid_co2_intensity": "Grid CO2 intensity (gCO2eq/kWh)",
+          "grid_fossil_share": "Grid fossil fuel share",
+          "gas_co2_factor": "Gas emission factor"
+        }
+      }
+    },
+    "error": {
+      "grid_power_pair": "Grid import power and grid export power must be mapped together.",
+      "grid_power_both": "Map either the signed grid power or the import/export pair, not both."
+    }
+  },
+  "selector": {
+    "grid_power_sign": {
+      "options": {
+        "negative_is_export": "Negative values mean export",
+        "positive_is_export": "Positive values mean export"
+      }
+    },
+    "battery_power_sign": {
+      "options": {
+        "positive_is_charging": "Positive values mean charging",
+        "positive_is_discharging": "Positive values mean discharging"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "grid_import_power": { "name": "Grid import power" },
+      "grid_export_power": { "name": "Grid export power" },
+      "battery_charge_power": { "name": "Battery charge power" },
+      "battery_discharge_power": { "name": "Battery discharge power" },
+      "load_power": { "name": "Household power" },
+      "load_energy": { "name": "Household energy" },
+      "pv_self_consumed_energy": { "name": "Solar self-consumed energy" },
+      "gas_energy_heating": { "name": "Gas energy heating" },
+      "gas_energy_dhw": { "name": "Gas energy hot water" },
+      "gas_energy_total": { "name": "Gas energy total" },
+      "today_grid_import_energy": { "name": "Grid import today" },
+      "today_grid_export_energy": { "name": "Grid export today" },
+      "today_pv_energy": { "name": "Solar energy today" },
+      "today_load_energy": { "name": "Household energy today" },
+      "today_gas_energy_heating": { "name": "Gas heating today" },
+      "today_gas_energy_dhw": { "name": "Gas hot water today" },
+      "today_gas_energy_total": { "name": "Gas total today" },
+      "today_solar_thermal_energy": { "name": "Solar thermal today" },
+      "import_cost": { "name": "Import cost" },
+      "export_revenue": { "name": "Export revenue" },
+      "net_electricity_cost": { "name": "Net electricity cost" },
+      "flat_tariff_cost": { "name": "Flat tariff reference cost" },
+      "dynamic_tariff_savings": { "name": "Dynamic tariff savings" },
+      "gas_cost": { "name": "Gas cost" },
+      "total_energy_cost": { "name": "Total energy cost" },
+      "solar_thermal_gas_avoided_cost": { "name": "Solar thermal gas cost avoided" },
+      "today_import_cost": { "name": "Import cost today" },
+      "today_export_revenue": { "name": "Export revenue today" },
+      "today_net_electricity_cost": { "name": "Net electricity cost today" },
+      "today_gas_cost": { "name": "Gas cost today" },
+      "today_total_energy_cost": { "name": "Total energy cost today" },
+      "today_dynamic_tariff_savings": { "name": "Dynamic tariff savings today" },
+      "grid_import_co2": { "name": "Grid import CO2" },
+      "avoided_co2_pv": { "name": "Solar avoided CO2" },
+      "gas_co2": { "name": "Gas CO2" },
+      "solar_thermal_avoided_co2": { "name": "Solar thermal avoided CO2" },
+      "total_co2": { "name": "Total CO2" },
+      "today_grid_import_co2": { "name": "Grid import CO2 today" },
+      "today_avoided_co2_pv": { "name": "Solar avoided CO2 today" },
+      "today_gas_co2": { "name": "Gas CO2 today" },
+      "today_solar_thermal_avoided_co2": { "name": "Solar thermal avoided CO2 today" },
+      "today_total_co2": { "name": "Total CO2 today" },
+      "self_sufficiency": { "name": "Self-sufficiency" },
+      "self_consumption_rate": { "name": "Self-consumption rate" },
+      "solar_share_of_dhw": { "name": "Solar share of hot water" },
+      "avg_import_price_paid": { "name": "Average import price today" },
+      "home_co2_intensity": { "name": "Home CO2 intensity" },
+      "heating_degree_days": { "name": "Heating degree days today" },
+      "gas_per_hdd": { "name": "Gas per heating degree day" },
+      "solar_thermal_gas_avoided_volume": { "name": "Solar thermal gas volume avoided" },
+      "flow_state": {
+        "name": "Flow state",
+        "state": {
+          "importing": "Importing",
+          "exporting": "Exporting",
+          "charging": "Charging battery",
+          "discharging": "Discharging battery",
+          "self_powered": "Self-powered"
+        }
+      },
+      "price_forecast": { "name": "Price forecast" },
+      "inactive_features": { "name": "Inactive features" }
+    },
+    "binary_sensor": {
+      "cheap_electricity": { "name": "Cheap electricity" }
+    }
+  }
+}

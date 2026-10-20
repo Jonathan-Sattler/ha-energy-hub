@@ -1,0 +1,502 @@
+# Energy Hub starter dashboard (stock cards only).
+#
+# How to use: Settings > Dashboards > Add dashboard > "New dashboard from scratch",
+# open it, three-dots menu > Raw configuration editor, paste this file, save.
+#
+# All sensor.energy_hub_* entities are created by the integration. The few
+# entities marked "YOUR ENTITY" are the ones you mapped in the config flow;
+# replace them with your own (the defaults below are the author's mapping).
+
+title: Energy Hub
+views:
+  # ---------------------------------------------------------------- Live flow
+  - title: Live
+    path: live
+    icon: mdi:transmission-tower
+    type: sections
+    max_columns: 3
+    badges:
+      - type: entity
+        entity: sensor.energy_hub_flow_state
+        show_name: false
+      - type: entity
+        entity: binary_sensor.energy_hub_cheap_electricity
+        show_name: true
+        color: green
+        visibility:
+          - condition: state
+            entity: binary_sensor.energy_hub_cheap_electricity
+            state: "on"
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Power flow
+            icon: mdi:home-lightning-bolt
+          - type: energy-distribution
+            link_dashboard: true
+            grid_options:
+              columns: full
+      - type: grid
+        cards:
+          - type: heading
+            heading: Right now
+            icon: mdi:flash
+          - type: tile
+            entity: sensor.energy_hub_grid_import_power
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_grid_export_power
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.mysite_pv_power # YOUR ENTITY: solar power
+            name: Solar
+            icon: mdi:solar-power
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_load_power
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_battery_charge_power
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_battery_discharge_power
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.mysite_battery_soc # YOUR ENTITY: battery state of charge
+            name: Battery
+            features:
+              - type: bar-gauge
+                min: 0
+                max: 100
+            grid_options:
+              columns: 12
+      - type: grid
+        cards:
+          - type: heading
+            heading: Price and carbon
+            icon: mdi:cash-clock
+          - type: tile
+            entity: sensor.energy_hub_price_forecast
+            name: Import price now
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_home_co2_intensity
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.electricity_maps_co2_intensity # YOUR ENTITY: grid CO2 intensity
+            name: Grid CO2 intensity
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.electricity_maps_grid_fossil_fuel_percentage # YOUR ENTITY: fossil share
+            name: Grid fossil share
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: binary_sensor.boiler_burner # YOUR ENTITY: burner active
+            name: Burner
+            icon: mdi:fire
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: binary_sensor.boiler_solar_pump # YOUR ENTITY: solar pump
+            name: Solar pump
+            icon: mdi:pump
+            grid_options:
+              columns: 6
+
+  # ------------------------------------------------------------ Period summary
+  - title: Summary
+    path: summary
+    icon: mdi:chart-box
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        column_span: 3
+        cards:
+          - type: energy-date-selection
+            grid_options:
+              columns: full
+      - type: grid
+        cards:
+          - type: heading
+            heading: Today
+            icon: mdi:calendar-today
+          - type: tile
+            entity: sensor.energy_hub_today_grid_import_energy
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_grid_export_energy
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_pv_energy
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_load_energy
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_self_sufficiency
+            features:
+              - type: bar-gauge
+                min: 0
+                max: 100
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_self_consumption_rate
+            features:
+              - type: bar-gauge
+                min: 0
+                max: 100
+            grid_options:
+              columns: 6
+      - type: grid
+        cards:
+          - type: heading
+            heading: Cost and carbon today
+            icon: mdi:cash-multiple
+          - type: tile
+            entity: sensor.energy_hub_today_import_cost
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_export_revenue
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_gas_cost
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_total_energy_cost
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_dynamic_tariff_savings
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_avg_import_price_paid
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_grid_import_co2
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_avoided_co2_pv
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_gas_co2
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_total_co2
+            grid_options:
+              columns: 6
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: Selected period
+            icon: mdi:calendar-range
+          - type: energy-usage-graph
+            grid_options:
+              columns: 12
+              rows: 6
+          - type: energy-solar-graph
+            grid_options:
+              columns: 12
+              rows: 6
+          - type: energy-sources-table
+            grid_options:
+              columns: 12
+          - type: energy-self-sufficiency-gauge
+            grid_options:
+              columns: 6
+              rows: 4
+          - type: energy-carbon-consumed-gauge
+            grid_options:
+              columns: 6
+              rows: 4
+          - type: energy-compare
+            grid_options:
+              columns: full
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: Cost and CO2 over time
+            icon: mdi:chart-line
+          - type: statistics-graph
+            title: Daily cost
+            chart_type: bar
+            period: day
+            days_to_show: 30
+            stat_types:
+              - change
+            entities:
+              - entity: sensor.energy_hub_import_cost
+                name: Import
+              - entity: sensor.energy_hub_export_revenue
+                name: Export revenue
+              - entity: sensor.energy_hub_gas_cost
+                name: Gas
+            grid_options:
+              columns: 12
+              rows: 6
+          - type: statistics-graph
+            title: Daily CO2
+            chart_type: bar
+            period: day
+            days_to_show: 30
+            stat_types:
+              - change
+            entities:
+              - entity: sensor.energy_hub_grid_import_co2
+                name: Grid import
+              - entity: sensor.energy_hub_gas_co2
+                name: Gas
+              - entity: sensor.energy_hub_avoided_co2_pv
+                name: Avoided by solar
+            grid_options:
+              columns: 12
+              rows: 6
+
+  # ------------------------------------------------------------------- Prices
+  - title: Prices
+    path: prices
+    icon: mdi:cash-clock
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Dynamic tariff
+            icon: mdi:cash-clock
+          - type: tile
+            entity: sensor.energy_hub_price_forecast
+            name: Now
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: binary_sensor.energy_hub_cheap_electricity
+            grid_options:
+              columns: 6
+          - type: markdown
+            title: Today and tomorrow
+            content: >-
+              {% set s = state_attr('sensor.energy_hub_price_forecast', 'today') or {} %}
+              {% set t = state_attr('sensor.energy_hub_price_forecast', 'tomorrow') or {} %}
+              {% set cur = states('sensor.energy_hub_price_forecast') %}
+              **Today**: min {{ s.min | default('–') }} · avg {{ (s.mean | default(0)) | round(3) }} · max {{ s.max | default('–') }}
+              {% if s.cheapest_start %}· cheapest from {{ as_timestamp(s.cheapest_start) | timestamp_custom('%H:%M') }}{% endif %}
+
+              **Tomorrow**: {% if t.min is defined and t.min is not none %}min {{ t.min }} · avg {{ (t.mean | default(0)) | round(3) }} · max {{ t.max }}{% else %}not published yet{% endif %}
+
+              Current slot ends {{ as_timestamp(state_attr('sensor.energy_hub_price_forecast', 'current_slot_end')) | timestamp_custom('%H:%M') if state_attr('sensor.energy_hub_price_forecast', 'current_slot_end') else '–' }}.
+            grid_options:
+              columns: full
+          - type: markdown
+            title: Next 12 intervals
+            content: >-
+              {% set fc = state_attr('sensor.energy_hub_price_forecast', 'forecast') or [] %}
+              {% set ns = namespace(rows=[]) %}
+              {% for f in fc if as_timestamp(f.end) > as_timestamp(now()) %}
+                {% if ns.rows | length < 12 %}
+                  {% set ns.rows = ns.rows + ['| ' ~ (as_timestamp(f.start) | timestamp_custom('%H:%M')) ~ ' | ' ~ (f.price | round(4)) ~ ' |'] %}
+                {% endif %}
+              {% endfor %}
+              | From | Price |
+              |---|---|
+              {{ ns.rows | join('\n') }}
+            grid_options:
+              columns: full
+      - type: grid
+        cards:
+          - type: heading
+            heading: Price history and savings
+            icon: mdi:chart-line
+          - type: history-graph
+            hours_to_show: 48
+            entities:
+              - entity: sensor.energy_hub_price_forecast
+                name: Import price
+            grid_options:
+              columns: full
+              rows: 5
+          - type: tile
+            entity: sensor.energy_hub_today_dynamic_tariff_savings
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_dynamic_tariff_savings
+            name: Savings since start
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_avg_import_price_paid
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_import_cost
+            grid_options:
+              columns: 6
+
+  # ------------------------------------------------------------------ Heating
+  - title: Heating
+    path: heating
+    icon: mdi:radiator
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Gas today
+            icon: mdi:fire
+          - type: tile
+            entity: sensor.energy_hub_today_gas_energy_heating
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_gas_energy_dhw
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_gas_cost
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_gas_co2
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_heating_degree_days
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_gas_per_hdd
+            grid_options:
+              columns: 6
+      - type: grid
+        cards:
+          - type: heading
+            heading: Solar thermal
+            icon: mdi:sun-thermometer
+          - type: tile
+            entity: sensor.energy_hub_today_solar_thermal_energy
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_solar_share_of_dhw
+            features:
+              - type: bar-gauge
+                min: 0
+                max: 100
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_solar_thermal_gas_avoided_cost
+            name: Gas cost avoided (total)
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.energy_hub_today_solar_thermal_avoided_co2
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.boiler_solar_collector_temperature # YOUR ENTITY
+            name: Collector
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.boiler_solar_storage_temperature # YOUR ENTITY
+            name: Solar storage
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.boiler_dhw_storage_temperature # YOUR ENTITY
+            name: Hot water storage
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.boiler_outside_temperature # YOUR ENTITY
+            name: Outside
+            grid_options:
+              columns: 6
+      - type: grid
+        cards:
+          - type: heading
+            heading: Boiler
+            icon: mdi:water-boiler
+          - type: tile
+            entity: binary_sensor.boiler_burner # YOUR ENTITY
+            name: Burner
+            grid_options:
+              columns: 6
+          - type: tile
+            entity: sensor.boiler_burner_modulation # YOUR ENTITY
+            name: Modulation
+            grid_options:
+              columns: 6
+          - type: history-graph
+            hours_to_show: 24
+            entities:
+              - entity: sensor.boiler_solar_collector_temperature # YOUR ENTITY
+                name: Collector
+              - entity: sensor.boiler_solar_storage_temperature # YOUR ENTITY
+                name: Solar storage
+              - entity: sensor.boiler_dhw_storage_temperature # YOUR ENTITY
+                name: Hot water
+              - entity: sensor.boiler_outside_temperature # YOUR ENTITY
+                name: Outside
+            grid_options:
+              columns: full
+              rows: 5
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: Gas over time
+            icon: mdi:chart-bar
+          - type: energy-date-selection
+            grid_options:
+              columns: full
+          - type: energy-gas-graph
+            grid_options:
+              columns: 12
+              rows: 6
+          - type: statistics-graph
+            title: Heating vs hot water (kWh per day)
+            chart_type: bar
+            period: day
+            days_to_show: 30
+            stat_types:
+              - change
+            entities:
+              - entity: sensor.energy_hub_gas_energy_heating
+                name: Heating
+              - entity: sensor.energy_hub_gas_energy_dhw
+                name: Hot water
+              - entity: sensor.energy_hub_today_solar_thermal_energy
+                name: Solar thermal
+            grid_options:
+              columns: 12
+              rows: 6

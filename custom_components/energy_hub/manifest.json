@@ -1,0 +1,13 @@
+{
+  "domain": "energy_hub",
+  "name": "Energy Hub",
+  "codeowners": ["@Jonathan-Sattler"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/Jonathan-Sattler/ha-energy-hub",
+  "integration_type": "hub",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/Jonathan-Sattler/ha-energy-hub/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

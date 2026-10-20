@@ -1,0 +1,261 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Energy Hub",
+        "description": "Energy Hub fasst deine vorhandenen Energiesensoren zu Kosten-, CO2- und Effizienzwerten zusammen. In vier kurzen Schritten ordnest du Entitäten den Slots zu. Alle Slots außer Netzbezug und Netzeinspeisung (Zähler) sind optional.",
+        "data": {
+          "name": "Name"
+        }
+      },
+      "electricity": {
+        "title": "Strom",
+        "description": "Netz-, Solar-, Batterie- und Haushaltsentitäten zuordnen. Entweder einen vorzeichenbehafteten Netzleistungssensor oder das Paar Bezug/Einspeisung angeben.",
+        "data": {
+          "grid_import_energy": "Netzbezug Energie (kWh-Zähler)",
+          "grid_export_energy": "Netzeinspeisung Energie (kWh-Zähler)",
+          "grid_power": "Netzleistung (mit Vorzeichen)",
+          "grid_power_sign": "Vorzeichenkonvention Netzleistung",
+          "grid_import_power": "Netzbezug Leistung",
+          "grid_export_power": "Netzeinspeisung Leistung",
+          "pv_power": "PV-Leistung",
+          "pv_energy": "PV-Energie (kWh-Zähler)",
+          "battery_power": "Batterieleistung (mit Vorzeichen)",
+          "battery_power_sign": "Vorzeichenkonvention Batterieleistung",
+          "battery_soc": "Batterieladestand",
+          "battery_charge_energy": "Batterie Ladeenergie (kWh-Zähler)",
+          "battery_discharge_energy": "Batterie Entladeenergie (kWh-Zähler)",
+          "battery_capacity_kwh": "Batteriekapazität",
+          "load_power": "Hausverbrauch Leistung",
+          "load_energy": "Hausverbrauch Energie (kWh-Zähler)"
+        },
+        "data_description": {
+          "load_power": "Leer lassen, um aus PV, Netz und Batterie zu berechnen.",
+          "load_energy": "Leer lassen, um aus den anderen Zählern zu berechnen."
+        }
+      },
+      "prices": {
+        "title": "Preise und Kosten",
+        "description": "Kosten werden aus Preis mal Energie berechnet. Wenn dein Anbieter bereits Kosten liefert, kannst du diese Sensoren als Überschreibung zuordnen.",
+        "data": {
+          "import_price": "Aktueller Bezugspreis (pro kWh)",
+          "forecast_attribute": "Name des Prognose-Attributs am Preissensor",
+          "export_price": "Aktueller Einspeisepreis (pro kWh)",
+          "export_price_fixed": "Feste Einspeisevergütung (pro kWh)",
+          "import_cost_override": "Bezugskosten-Sensor des Anbieters (Überschreibung)",
+          "export_revenue_override": "Einspeiseerlös-Sensor des Anbieters (Überschreibung)",
+          "flat_reference_price": "Referenzpreis Festtarif (pro kWh)",
+          "cheap_now": "Anbieter-Flag „günstiger Strom“",
+          "cheap_threshold_percentile": "Perzentil für „günstig“"
+        },
+        "data_description": {
+          "forecast_attribute": "Attribut mit einer Liste von Intervallen mit Start, Ende und Preis.",
+          "flat_reference_price": "Was du bei einem Festtarif zahlen würdest; aktiviert die Ersparnis-Sensoren.",
+          "cheap_threshold_percentile": "Ohne Anbieter-Flag gilt Strom als günstig, wenn der Preis innerhalb dieses Perzentils der heutigen Preise liegt."
+        }
+      },
+      "gas_thermal": {
+        "title": "Gas und Wärme",
+        "description": "Gasvolumen wird mit Brennwert und Zustandszahl von deiner Gasrechnung in kWh umgerechnet. Solarthermie benötigt einen Zähler der gewonnenen Wärme.",
+        "data": {
+          "gas_heating_volume": "Gas für Heizung (Zähler)",
+          "gas_dhw_volume": "Gas für Warmwasser (Zähler)",
+          "gas_total_volume": "Gas gesamt (Zähler, falls keine Aufteilung)",
+          "gas_calorific_value": "Brennwert",
+          "gas_correction_factor": "Zustandszahl",
+          "gas_price": "Gaspreis (pro kWh)",
+          "gas_price_entity": "Gaspreis-Entität (pro kWh)",
+          "boiler_efficiency": "Kesselwirkungsgrad",
+          "solar_thermal_energy": "Solarthermie Energie (kWh-Zähler)",
+          "solar_collector_temp": "Kollektortemperatur",
+          "solar_storage_temp": "Solarspeichertemperatur",
+          "dhw_storage_temp": "Warmwasserspeichertemperatur",
+          "solar_pump": "Solarpumpe",
+          "boiler_electricity_energy": "Kessel Stromverbrauch (kWh-Zähler)",
+          "burner_modulation": "Brennermodulation",
+          "burner_active": "Brenner aktiv",
+          "outside_temp": "Außentemperatur",
+          "hdd_base_temp": "Heizgrenztemperatur für Gradtage"
+        },
+        "data_description": {
+          "gas_heating_volume": "Zähler in m³ oder kWh werden beide akzeptiert.",
+          "boiler_efficiency": "Dient dazu, Solarwärme als vermiedenes Gas auszudrücken."
+        }
+      },
+      "carbon": {
+        "title": "CO2",
+        "description": "CO2-Werte benötigen einen Sensor für die aktuelle Netz-CO2-Intensität, z. B. von Electricity Maps.",
+        "data": {
+          "grid_co2_intensity": "Netz-CO2-Intensität (gCO2eq/kWh)",
+          "grid_fossil_share": "Fossiler Anteil im Netz",
+          "gas_co2_factor": "Emissionsfaktor Gas"
+        }
+      }
+    },
+    "error": {
+      "grid_power_pair": "Netzbezug- und Netzeinspeiseleistung müssen zusammen zugeordnet werden.",
+      "grid_power_both": "Entweder die vorzeichenbehaftete Netzleistung oder das Paar Bezug/Einspeisung zuordnen, nicht beides."
+    },
+    "abort": {
+      "already_configured": "Dieser Hub ist bereits konfiguriert."
+    }
+  },
+  "options": {
+    "step": {
+      "electricity": {
+        "title": "Strom",
+        "description": "Netz-, Solar-, Batterie- und Haushaltsentitäten zuordnen. Entweder einen vorzeichenbehafteten Netzleistungssensor oder das Paar Bezug/Einspeisung angeben.",
+        "data": {
+          "grid_import_energy": "Netzbezug Energie (kWh-Zähler)",
+          "grid_export_energy": "Netzeinspeisung Energie (kWh-Zähler)",
+          "grid_power": "Netzleistung (mit Vorzeichen)",
+          "grid_power_sign": "Vorzeichenkonvention Netzleistung",
+          "grid_import_power": "Netzbezug Leistung",
+          "grid_export_power": "Netzeinspeisung Leistung",
+          "pv_power": "PV-Leistung",
+          "pv_energy": "PV-Energie (kWh-Zähler)",
+          "battery_power": "Batterieleistung (mit Vorzeichen)",
+          "battery_power_sign": "Vorzeichenkonvention Batterieleistung",
+          "battery_soc": "Batterieladestand",
+          "battery_charge_energy": "Batterie Ladeenergie (kWh-Zähler)",
+          "battery_discharge_energy": "Batterie Entladeenergie (kWh-Zähler)",
+          "battery_capacity_kwh": "Batteriekapazität",
+          "load_power": "Hausverbrauch Leistung",
+          "load_energy": "Hausverbrauch Energie (kWh-Zähler)"
+        }
+      },
+      "prices": {
+        "title": "Preise und Kosten",
+        "data": {
+          "import_price": "Aktueller Bezugspreis (pro kWh)",
+          "forecast_attribute": "Name des Prognose-Attributs am Preissensor",
+          "export_price": "Aktueller Einspeisepreis (pro kWh)",
+          "export_price_fixed": "Feste Einspeisevergütung (pro kWh)",
+          "import_cost_override": "Bezugskosten-Sensor des Anbieters (Überschreibung)",
+          "export_revenue_override": "Einspeiseerlös-Sensor des Anbieters (Überschreibung)",
+          "flat_reference_price": "Referenzpreis Festtarif (pro kWh)",
+          "cheap_now": "Anbieter-Flag „günstiger Strom“",
+          "cheap_threshold_percentile": "Perzentil für „günstig“"
+        }
+      },
+      "gas_thermal": {
+        "title": "Gas und Wärme",
+        "data": {
+          "gas_heating_volume": "Gas für Heizung (Zähler)",
+          "gas_dhw_volume": "Gas für Warmwasser (Zähler)",
+          "gas_total_volume": "Gas gesamt (Zähler, falls keine Aufteilung)",
+          "gas_calorific_value": "Brennwert",
+          "gas_correction_factor": "Zustandszahl",
+          "gas_price": "Gaspreis (pro kWh)",
+          "gas_price_entity": "Gaspreis-Entität (pro kWh)",
+          "boiler_efficiency": "Kesselwirkungsgrad",
+          "solar_thermal_energy": "Solarthermie Energie (kWh-Zähler)",
+          "solar_collector_temp": "Kollektortemperatur",
+          "solar_storage_temp": "Solarspeichertemperatur",
+          "dhw_storage_temp": "Warmwasserspeichertemperatur",
+          "solar_pump": "Solarpumpe",
+          "boiler_electricity_energy": "Kessel Stromverbrauch (kWh-Zähler)",
+          "burner_modulation": "Brennermodulation",
+          "burner_active": "Brenner aktiv",
+          "outside_temp": "Außentemperatur",
+          "hdd_base_temp": "Heizgrenztemperatur für Gradtage"
+        }
+      },
+      "carbon": {
+        "title": "CO2",
+        "data": {
+          "grid_co2_intensity": "Netz-CO2-Intensität (gCO2eq/kWh)",
+          "grid_fossil_share": "Fossiler Anteil im Netz",
+          "gas_co2_factor": "Emissionsfaktor Gas"
+        }
+      }
+    },
+    "error": {
+      "grid_power_pair": "Netzbezug- und Netzeinspeiseleistung müssen zusammen zugeordnet werden.",
+      "grid_power_both": "Entweder die vorzeichenbehaftete Netzleistung oder das Paar Bezug/Einspeisung zuordnen, nicht beides."
+    }
+  },
+  "selector": {
+    "grid_power_sign": {
+      "options": {
+        "negative_is_export": "Negative Werte bedeuten Einspeisung",
+        "positive_is_export": "Positive Werte bedeuten Einspeisung"
+      }
+    },
+    "battery_power_sign": {
+      "options": {
+        "positive_is_charging": "Positive Werte bedeuten Laden",
+        "positive_is_discharging": "Positive Werte bedeuten Entladen"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "grid_import_power": { "name": "Netzbezug Leistung" },
+      "grid_export_power": { "name": "Netzeinspeisung Leistung" },
+      "battery_charge_power": { "name": "Batterie Ladeleistung" },
+      "battery_discharge_power": { "name": "Batterie Entladeleistung" },
+      "load_power": { "name": "Hausverbrauch Leistung" },
+      "load_energy": { "name": "Hausverbrauch Energie" },
+      "pv_self_consumed_energy": { "name": "PV-Eigenverbrauch Energie" },
+      "gas_energy_heating": { "name": "Gasenergie Heizung" },
+      "gas_energy_dhw": { "name": "Gasenergie Warmwasser" },
+      "gas_energy_total": { "name": "Gasenergie gesamt" },
+      "today_grid_import_energy": { "name": "Netzbezug heute" },
+      "today_grid_export_energy": { "name": "Netzeinspeisung heute" },
+      "today_pv_energy": { "name": "PV-Energie heute" },
+      "today_load_energy": { "name": "Hausverbrauch heute" },
+      "today_gas_energy_heating": { "name": "Gas Heizung heute" },
+      "today_gas_energy_dhw": { "name": "Gas Warmwasser heute" },
+      "today_gas_energy_total": { "name": "Gas gesamt heute" },
+      "today_solar_thermal_energy": { "name": "Solarthermie heute" },
+      "import_cost": { "name": "Bezugskosten" },
+      "export_revenue": { "name": "Einspeiseerlös" },
+      "net_electricity_cost": { "name": "Stromkosten netto" },
+      "flat_tariff_cost": { "name": "Referenzkosten Festtarif" },
+      "dynamic_tariff_savings": { "name": "Ersparnis dynamischer Tarif" },
+      "gas_cost": { "name": "Gaskosten" },
+      "total_energy_cost": { "name": "Energiekosten gesamt" },
+      "solar_thermal_gas_avoided_cost": { "name": "Solarthermie vermiedene Gaskosten" },
+      "today_import_cost": { "name": "Bezugskosten heute" },
+      "today_export_revenue": { "name": "Einspeiseerlös heute" },
+      "today_net_electricity_cost": { "name": "Stromkosten netto heute" },
+      "today_gas_cost": { "name": "Gaskosten heute" },
+      "today_total_energy_cost": { "name": "Energiekosten gesamt heute" },
+      "today_dynamic_tariff_savings": { "name": "Ersparnis dynamischer Tarif heute" },
+      "grid_import_co2": { "name": "Netzbezug CO2" },
+      "avoided_co2_pv": { "name": "PV vermiedenes CO2" },
+      "gas_co2": { "name": "Gas CO2" },
+      "solar_thermal_avoided_co2": { "name": "Solarthermie vermiedenes CO2" },
+      "total_co2": { "name": "CO2 gesamt" },
+      "today_grid_import_co2": { "name": "Netzbezug CO2 heute" },
+      "today_avoided_co2_pv": { "name": "PV vermiedenes CO2 heute" },
+      "today_gas_co2": { "name": "Gas CO2 heute" },
+      "today_solar_thermal_avoided_co2": { "name": "Solarthermie vermiedenes CO2 heute" },
+      "today_total_co2": { "name": "CO2 gesamt heute" },
+      "self_sufficiency": { "name": "Autarkie" },
+      "self_consumption_rate": { "name": "Eigenverbrauchsquote" },
+      "solar_share_of_dhw": { "name": "Solaranteil Warmwasser" },
+      "avg_import_price_paid": { "name": "Durchschnittlicher Bezugspreis heute" },
+      "home_co2_intensity": { "name": "CO2-Intensität Haus" },
+      "heating_degree_days": { "name": "Gradtage heute" },
+      "gas_per_hdd": { "name": "Gas pro Gradtag" },
+      "solar_thermal_gas_avoided_volume": { "name": "Solarthermie vermiedenes Gasvolumen" },
+      "flow_state": {
+        "name": "Energiefluss",
+        "state": {
+          "importing": "Netzbezug",
+          "exporting": "Einspeisung",
+          "charging": "Batterie lädt",
+          "discharging": "Batterie entlädt",
+          "self_powered": "Eigenversorgung"
+        }
+      },
+      "price_forecast": { "name": "Preisprognose" },
+      "inactive_features": { "name": "Inaktive Funktionen" }
+    },
+    "binary_sensor": {
+      "cheap_electricity": { "name": "Günstiger Strom" }
+    }
+  }
+}
