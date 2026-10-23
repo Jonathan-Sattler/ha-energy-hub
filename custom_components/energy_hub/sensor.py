@@ -280,12 +280,31 @@ class EnergyHubSensor(EnergyHubEntity, SensorEntity):
         return dt_util.start_of_local_day()
 
 
+LIVE_ATTRIBUTES: tuple[str, ...] = (
+    "pv_power",
+    "load_power",
+    "grid_import_power",
+    "grid_export_power",
+    "battery_charge_power",
+    "battery_discharge_power",
+    "battery_soc",
+    "cheap_now",
+)
+
+
+def _round(value: Any) -> Any:
+    return round(value, 1) if isinstance(value, float) else value
+
+
 class FlowStateSensor(EnergyHubEntity, SensorEntity):
     """Summary of the current energy flow."""
 
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = ["importing", "exporting", "charging", "discharging", "self_powered"]
     _attr_icon = "mdi:transmission-tower"
+
+    # Live values change every few seconds; keep them out of the recorder.
+    _unrecorded_attributes = frozenset({*LIVE_ATTRIBUTES, "sources"})
 
     def __init__(self, coordinator: EnergyHubCoordinator) -> None:
         super().__init__(coordinator, PLATFORM, "flow_state")
@@ -294,6 +313,14 @@ class FlowStateSensor(EnergyHubEntity, SensorEntity):
     def native_value(self) -> str | None:
         """Return the flow state."""
         return self.coordinator.data.get("flow_state")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Live powers in W plus the mapped source entities, for the house card."""
+        data = self.coordinator.data
+        attrs: dict[str, Any] = {key: _round(data.get(key)) for key in LIVE_ATTRIBUTES}
+        attrs["sources"] = dict(self.coordinator.slots)
+        return attrs
 
 
 class PriceForecastSensor(EnergyHubEntity, SensorEntity):

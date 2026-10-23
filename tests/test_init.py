@@ -137,3 +137,24 @@ async def test_state_survives_reload(hass: HomeAssistant) -> None:
     _set_sources(hass, import_kwh=111.0, gas_m3=3.0, price=0.30)
     await hass.async_block_till_done()
     assert float(hass.states.get("sensor.energy_hub_import_cost").state) == 3.3
+
+
+async def test_flow_state_carries_live_values_for_the_house_card(hass: HomeAssistant) -> None:
+    _set_sources(hass, import_kwh=100.0, gas_m3=3.0, price=0.30)
+    await _setup(hass)
+
+    attrs = hass.states.get("sensor.energy_hub_flow_state").attributes
+    assert attrs["pv_power"] == 8300.0
+    assert attrs["grid_export_power"] == 7500.0
+    assert attrs["battery_charge_power"] == 400.0
+    assert attrs["load_power"] == 400.0
+    assert attrs["sources"]["pv_power"] == "sensor.pv_power"
+    assert attrs["sources"]["import_price"] == "sensor.price"
+
+
+def test_card_is_shipped() -> None:
+    from custom_components.energy_hub import CARD_FILE
+
+    text = CARD_FILE.read_text()
+    assert 'customElements.define("energy-hub-house-card"' in text
+    assert "__TEX__" not in text

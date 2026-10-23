@@ -1,4 +1,4 @@
-# Energy Hub starter dashboard (stock cards only).
+# Energy Hub starter dashboard: the house card as landing view, stock cards behind it.
 #
 # How to use: Settings > Dashboards > Add dashboard > "New dashboard from scratch",
 # open it, three-dots menu > Raw configuration editor, paste this file, save.
@@ -9,6 +9,18 @@
 
 title: Energy Hub
 views:
+  # ---------------------------------------------------------------- House (landing view)
+  - title: Home
+    path: home
+    icon: mdi:home-lightning-bolt
+    type: panel
+    cards:
+      - type: custom:energy-hub-house-card
+        # scene: /local/energy-hub/house.js   # your own house; the built-in demo house otherwise
+        actions:
+          electricity: { action: navigate, navigation_path: live }
+          grid: { action: navigate, navigation_path: prices }
+          heating: { action: navigate, navigation_path: heating }
   # ---------------------------------------------------------------- Live flow
   - title: Live
     path: live

@@ -100,10 +100,43 @@ reset and keeps counting.
 
 ## Dashboard
 
-`dashboards/energy-hub.yaml` is a starter dashboard built only from stock
-cards. Create a new empty dashboard, open the raw configuration editor and
-paste the file. Replace the entities marked `YOUR ENTITY` with the ones you
-mapped. Custom cards with a flow diagram and a price curve are planned.
+`dashboards/energy-hub.yaml` is a starter dashboard. Its landing view is the
+house card; the views behind it use stock cards only. Create a new empty
+dashboard, open the raw configuration editor and paste the file. Replace the
+entities marked `YOUR ENTITY` with the ones you mapped.
+
+## House card
+
+The integration ships `custom:energy-hub-house-card` and loads it on every
+dashboard itself, so there is no resource to add. It draws a house with its
+energy flows: short glowing pulses run from the sources into the energy
+manager and on to the consumers, coloured by origin (solar and battery in
+mint, grid in purple; gas, hot and cold water on their own loop). Sun position,
+sky and weather follow `sun.sun` and your weather entity.
+
+```yaml
+type: custom:energy-hub-house-card
+entity: sensor.energy_hub_flow_state   # optional, found automatically
+scene: /local/energy-hub/house.js      # optional, built-in demo house otherwise
+weather: weather.home                  # optional, first weather entity otherwise
+pv_peak_power: 13000                   # optional, W, scales the panel glow
+show_status: true                      # optional, energy manager message below
+actions:                               # optional, standard Home Assistant actions
+  electricity: { action: navigate, navigation_path: live }
+  grid: { action: navigate, navigation_path: prices }
+  heating: { action: navigate, navigation_path: heating }
+```
+
+Every element is clickable. Actions are looked up by zone (`solar`,
+`solar_thermal`, `battery`, `ems`, `household`, `grid`, `heating`,
+`wallbox`), then by group (`electricity` covers the first six electrical
+zones, `heating` covers `heating` and `solar_thermal`). Without an action the
+card opens the entity mapped for that element. A `navigation_path` without a
+leading `/` is a view of the current dashboard.
+
+The card reads everything from the flow state sensor: its attributes carry the
+live powers and the entities you mapped, so nothing has to be configured
+twice. To draw your own house, see [docs/HOUSE_SCENES.md](docs/HOUSE_SCENES.md).
 
 ## Entities
 
@@ -127,13 +160,14 @@ Home Assistant's long-term statistics on the lifetime counters.
 uv sync
 uv run pytest
 uv run ruff check .
+uv run --with pillow python frontend/build.py   # rebuild the house card after editing frontend/card.src.js
 ```
 
 ## Roadmap
 
 - Per-device consumption list with parent subtraction.
 - Slots for solar forecast, EV charger, water meter and heat pump.
-- Custom cards: flow diagram, price curve, heating overview, tabbed wrapper.
+- Visual editor for the house card; more cards: price curve, heating overview.
 
 ## License
 

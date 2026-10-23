@@ -253,6 +253,55 @@ def garage_door() -> None:
     to_img(px).save(OUT / "garage_door.png")
 
 
+def driveway_pavers() -> None:
+    """Grey interlocking pavers of the driveway: hexagonal stones on a 20 cm lattice with
+    dark joints, every stone a slightly different grey. Image 1000 x 1039 px = 1.0 x 1.039 m."""
+    d = 200.0
+    W, H = 1000, round(3 * d * 3**0.5)
+    yy, xx = np.mgrid[0:H, 0:W].astype(float)
+    pts = [(i * d + (j % 2) * d / 2, j * d * 3**0.5 / 2) for j in range(6) for i in range(5)]
+    d1 = np.full((H, W), 1e9); d2 = np.full((H, W), 1e9); idx = np.zeros((H, W), int)
+    for k, (px, py) in enumerate(pts):
+        for ox in (-W, 0, W):
+            for oy in (-H, 0, H):
+                dist = np.hypot(xx - px - ox, yy - py - oy)
+                closer = dist < d1
+                d2 = np.where(closer, d1, np.minimum(d2, dist))
+                idx = np.where(closer, k, idx)
+                d1 = np.where(closer, dist, d1)
+    r = np.random.default_rng(51)
+    tone = r.normal(0, 6, size=len(pts))[idx]
+    base = hex_rgb("#6f6d6a")
+    face = np.clip((d2 - d1) / 18.0, 0, 1)                     # bevel towards the joint
+    px = base[None, None, :] + (tone + band_rect(H, W, 0.3, 1.0, 52) * 5 - (1 - face) * 25)[..., None]
+    joint = (d2 - d1) < 7
+    px = np.where(joint[..., None], hex_rgb("#3a3836")[None, None, :], px)
+    to_img(px).save(OUT / "driveway_pavers.png")
+
+
+def terrace_slabs() -> None:
+    """Light grey terrace slabs, 50 cm, each split into 2 x 2 fields of parallel grooves whose
+    direction alternates like a basket weave. Image 1000 x 1000 px = 1.0 x 1.0 m (2 x 2 slabs)."""
+    W = H = 1000
+    yy, xx = np.mgrid[0:H, 0:W].astype(float)
+    slab, field = 500.0, 250.0
+    u, v = xx % slab, yy % slab
+    fx, fy = np.floor(u / field), np.floor(v / field)
+    horizontal = (fx + fy) % 2 == 0
+    along = np.where(horizontal, v % field, u % field)
+    groove = np.exp(-(((along % 41.0) - 20.5) / 3.2) ** 2) * 32
+    r = np.random.default_rng(61)
+    sid = (np.floor(xx / slab) + 2 * np.floor(yy / slab)).astype(int)
+    tone = r.normal(0, 6, size=8)[sid]
+    base = hex_rgb("#c9c5bc")
+    px = base[None, None, :] + (tone - groove + band_rect(H, W, 0.2, 1.0, 62) * 7 + band_rect(H, W, 0.02, 0.2, 63) * 6)[..., None]
+    edge = np.minimum(np.minimum(u, slab - u), np.minimum(v, slab - v))
+    px *= np.where(edge < 5, 0.55, np.where(edge < 10, 0.9, 1.0))[..., None]
+    fedge = np.minimum(np.minimum(u % field, field - u % field), np.minimum(v % field, field - v % field))
+    px *= np.where(fedge < 3, 0.85, 1.0)[..., None]
+    to_img(px).save(OUT / "terrace_slabs.png")
+
+
 if __name__ == "__main__":
     plaster("#efece4", "white")
     plaster("#7a5540", "brown")
@@ -260,5 +309,7 @@ if __name__ == "__main__":
     roof_tiles()
     dark_wood()
     garage_door()
+    driveway_pavers()
+    terrace_slabs()
     print("written:", sorted(p.name for p in OUT.glob("*.png")))
-    print("SketchUp sizes: white/brown plaster 1.0 x 1.0 m; plinth_clinker 1.0 x 0.972 m; roof_tiles_brown 1.2 x 1.0 m; dark_wood 1.0 x 1.0 m; garage_door 1.0 m wide x full door height (4 sections)")
+    print("SketchUp sizes: white/brown plaster 1.0 x 1.0 m; plinth_clinker 1.0 x 0.972 m; roof_tiles_brown 1.2 x 1.0 m; dark_wood 1.0 x 1.0 m; garage_door 1.0 m wide x full door height (4 sections); driveway_pavers 1.0 x 1.039 m; terrace_slabs 1.0 x 1.0 m")

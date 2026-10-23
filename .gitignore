@@ -12,3 +12,4 @@ build/
 uv.lock
 *.local.yaml
 design/reference/
+*.local.js
