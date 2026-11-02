@@ -15,7 +15,7 @@
  * Groups: electricity (solar, battery, ems, household, grid, wallbox), heating (heating, solar_thermal).
  * A navigation_path without a leading "/" is a view of the current dashboard.
  */
-const VERSION = "0.2.0";
+const VERSION = "0.2.1";
 const TEX = __TEX__;
 const NS = "http://www.w3.org/2000/svg";
 

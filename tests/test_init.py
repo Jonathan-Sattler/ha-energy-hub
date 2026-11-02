@@ -158,3 +158,19 @@ def test_card_is_shipped() -> None:
     text = CARD_FILE.read_text()
     assert 'customElements.define("energy-hub-house-card"' in text
     assert "__TEX__" not in text
+
+
+async def test_card_resource_is_registered(hass: HomeAssistant) -> None:
+    from homeassistant.components.lovelace.const import LOVELACE_DATA
+    from homeassistant.setup import async_setup_component
+
+    from custom_components.energy_hub import CARD_URL, _async_register_resource
+
+    assert await async_setup_component(hass, "lovelace", {})
+    resources = hass.data[LOVELACE_DATA].resources
+    await _async_register_resource(hass, f"{CARD_URL}?v=1")
+    await _async_register_resource(hass, f"{CARD_URL}?v=2")  # update, not duplicate
+    items = [i for i in resources.async_items() if i["url"].startswith(CARD_URL)]
+    assert len(items) == 1
+    assert items[0]["url"] == f"{CARD_URL}?v=2"
+    assert items[0]["type"] == "module"

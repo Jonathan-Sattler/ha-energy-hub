@@ -302,6 +302,35 @@ def terrace_slabs() -> None:
     to_img(px).save(OUT / "terrace_slabs.png")
 
 
+def woodchip_wallpaper() -> None:
+    """White woodchip wallpaper (Raufaser): scattered small wood flakes under a white coat of
+    paint, read as a fine bumpy relief. Image 1000 x 1000 px = 0.5 x 0.5 m, seamless."""
+    W = H = 1000
+    r = np.random.default_rng(71)
+    base = hex_rgb("#f2f1ee")
+    relief = np.zeros((H, W))
+    yy, xx = np.mgrid[0:H, 0:W].astype(float)
+    for _ in range(2600):
+        cx, cy = r.uniform(0, W), r.uniform(0, H)
+        rx, ry = r.uniform(2.5, 9), r.uniform(1.5, 5)
+        ang = r.uniform(0, np.pi)
+        for ox in (-W, 0, W):
+            for oy in (-H, 0, H):
+                dx, dy = xx - cx - ox, yy - cy - oy
+                if np.abs(dx).min() > 20 or np.abs(dy).min() > 20:
+                    continue
+                u = dx * np.cos(ang) + dy * np.sin(ang)
+                v = -dx * np.sin(ang) + dy * np.cos(ang)
+                relief += np.clip(1 - (u / rx) ** 2 - (v / ry) ** 2, 0, 1)
+    relief = np.clip(relief, 0, 1)
+    # light from the top left: each flake gets a bright upper-left and a shadowed lower-right edge
+    gy, gx = np.gradient(relief)
+    shade = (-gx - gy) * 60 - relief * 6
+    lum = shade + band_rect(H, W, 0.4, 1.0, 72) * 2.0
+    px = base[None, None, :] + lum[..., None]
+    to_img(px).save(OUT / "woodchip_wallpaper.png")
+
+
 if __name__ == "__main__":
     plaster("#efece4", "white")
     plaster("#7a5540", "brown")
@@ -311,5 +340,6 @@ if __name__ == "__main__":
     garage_door()
     driveway_pavers()
     terrace_slabs()
+    woodchip_wallpaper()
     print("written:", sorted(p.name for p in OUT.glob("*.png")))
-    print("SketchUp sizes: white/brown plaster 1.0 x 1.0 m; plinth_clinker 1.0 x 0.972 m; roof_tiles_brown 1.2 x 1.0 m; dark_wood 1.0 x 1.0 m; garage_door 1.0 m wide x full door height (4 sections); driveway_pavers 1.0 x 1.039 m; terrace_slabs 1.0 x 1.0 m")
+    print("SketchUp sizes: white/brown plaster 1.0 x 1.0 m; plinth_clinker 1.0 x 0.972 m; roof_tiles_brown 1.2 x 1.0 m; dark_wood 1.0 x 1.0 m; garage_door 1.0 m wide x full door height (4 sections); driveway_pavers 1.0 x 1.039 m; terrace_slabs 1.0 x 1.0 m; woodchip_wallpaper 0.5 x 0.5 m")

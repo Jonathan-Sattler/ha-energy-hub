@@ -7,8 +7,8 @@ import logging
 from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
-from homeassistant.core import HomeAssistant
+from homeassistant.const import EVENT_HOMEASSISTANT_STARTED, Platform
+from homeassistant.core import Event, HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
@@ -40,8 +40,44 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         )
     except RuntimeError:  # already registered after a reload
         _LOGGER.debug("House card path already registered")
-    add_extra_js_url(hass, f"{CARD_URL}?v={version}")
+    url = f"{CARD_URL}?v={version}"
+    # Fast path: the start page imports the card directly.
+    add_extra_js_url(hass, url)
+
+    # Robust path: also register a dashboard resource. Clients that keep an
+    # older start page cached (notably the companion apps) load resources
+    # from the dashboard config instead, so the card is found there too.
+    async def _register(_event: Event | None = None) -> None:
+        await _async_register_resource(hass, url)
+
+    if hass.is_running:
+        hass.async_create_task(_register())
+    else:
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, _register)
     return True
+
+
+async def _async_register_resource(hass: HomeAssistant, url: str) -> None:
+    """Add or update the card's Lovelace resource (storage mode only)."""
+    try:
+        from homeassistant.components.lovelace.const import LOVELACE_DATA
+    except ImportError:
+        return
+    data = hass.data.get(LOVELACE_DATA)
+    if data is None or data.resource_mode != "storage":
+        _LOGGER.debug("Lovelace resources in YAML mode; add %s yourself", url)
+        return
+    resources = data.resources
+    await resources.async_get_info()  # loads the collection
+    for item in resources.async_items():
+        if not item.get("url", "").startswith(CARD_URL):
+            continue
+        if item["url"] != url:
+            await resources.async_update_item(item["id"], {"res_type": "module", "url": url})
+            _LOGGER.info("Updated house card resource to %s", url)
+        return
+    await resources.async_create_item({"res_type": "module", "url": url})
+    _LOGGER.info("Registered house card resource %s", url)
 
 
 def _manifest_version() -> str:
