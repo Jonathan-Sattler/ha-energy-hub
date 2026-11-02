@@ -327,17 +327,16 @@ views:
               columns: full
           - type: markdown
             title: Next 12 intervals
-            content: >-
-              {% set fc = state_attr('sensor.energy_hub_price_forecast', 'forecast') or [] %}
-              {% set ns = namespace(rows=[]) %}
-              {% for f in fc if as_timestamp(f.end) > as_timestamp(now()) %}
-                {% if ns.rows | length < 12 %}
-                  {% set ns.rows = ns.rows + ['| ' ~ (as_timestamp(f.start) | timestamp_custom('%H:%M')) ~ ' | ' ~ (f.price | round(4)) ~ ' |'] %}
-                {% endif %}
-              {% endfor %}
+            # literal block (|-): a folded block would join the table rows into one line
+            content: |-
               | From | Price |
               |---|---|
-              {{ ns.rows | join('\n') }}
+              {%- set fc = state_attr('sensor.energy_hub_price_forecast', 'forecast') or [] %}
+              {%- set ns = namespace(n=0) %}
+              {%- for f in fc if as_timestamp(f.end) > as_timestamp(now()) and ns.n < 12 %}
+              | {{ as_timestamp(f.start) | timestamp_custom('%H:%M') }} | {{ f.price | round(4) }} |
+              {%- set ns.n = ns.n + 1 %}
+              {%- endfor %}
             grid_options:
               columns: full
       - type: grid
